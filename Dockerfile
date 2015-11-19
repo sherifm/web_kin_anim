@@ -36,10 +36,10 @@ RUN pip install rosdep rosinstall_generator wstool
 #Initialize rosdep
 RUN rosdep init && rosdep update
 
-#Create workspace dir
+#Create ros workspace dir
 RUN mkdir -p /home/vmagent/ros_ws
 
-#Create catkin_ws
+#Create ros_ws
 RUN cd /home/vmagent/ros_ws && \
 	rosinstall_generator ros_comm geometry_msgs joint_state_publisher \
 	robot_state_publisher xacro --rosdistro indigo --deps --wet-only \
@@ -66,7 +66,8 @@ RUN cd /home/vmagent/ros_ws/external_src/urdfdom_headers && \
  	checkinstall --nodoc -y --pkgname=liburdfdom-headers-dev make install
 
 #Install liburdfdom-dev
-RUN apt-get install -y libboost-test-dev libtinyxml-dev
+RUN apt-get update -y &&\
+	apt-get install -y libboost-test-dev libtinyxml-dev
 RUN git clone https://github.com/ros/urdfdom.git \
 	/home/vmagent/ros_ws/external_src/urdfdom
 RUN cd /home/vmagent/ros_ws/external_src/urdfdom && \
@@ -76,24 +77,34 @@ RUN cd /home/vmagent/ros_ws/external_src/urdfdom && \
 #Install liblz4-dev
 RUN apt-get -y -t wheezy-backports install liblz4-dev
 
-#Clone kinematics_animation, universal_robot and barrett_model packages
-RUN git clone https://github.com/sherifm/kinematics_animation.git \
-	/home/vmagent/ros_ws/src/kinematics_animation
-RUN git clone https://github.com/sherifm/universal_robot.git \
-	/home/vmagent/ros_ws/src/universal_robot
-RUN git clone https://github.com/sherifm/barrett_model.git \
-	/home/vmagent/ros_ws/src/barrett_model
-
 #Resolve some dependencies with rosdep
 RUN cd /home/vmagent/ros_ws/ && \
 	rosdep install --from-paths src --ignore-src --rosdistro=indigo -y -r \
 	--os=debian:wheezy --as-root="apt:false" \
 	--skip-keys="python-rosdep python-rospkg python-catkin-pkg"
 
-#Build the catkin workspace
+#Build the ros workspace
 RUN cd /home/vmagent/ros_ws/ && \
 	./src/catkin/bin/catkin_make_isolated --install -DCMAKE_BUILD_TYPE=Release \
 	--install-space /opt/ros/indigo
 
+#Create and initialize catkin workspace dir
+RUN mkdir -p /home/vmagent/catkin_ws/src 
+RUN /bin/bash -c "source /opt/ros/indigo/setup.bash && \
+	cd /home/vmagent/catkin_ws/src &&\
+	catkin_init_workspace"
+
+#Clone kinematics_animation, universal_robot and barrett_model packages
+RUN git clone https://github.com/sherifm/kinematics_animation.git \
+	/home/vmagent/catkin_ws/src/kinematics_animation
+RUN git clone https://github.com/sherifm/universal_robot.git \
+	/home/vmagent/catkin_ws/src/universal_robot
+RUN git clone https://github.com/sherifm/barrett_model.git \
+	/home/vmagent/catkin_ws/src/barrett_model
+
+RUN /bin/bash -c "source /opt/ros/indigo/setup.bash && \
+	cd /home/vmagent/catkin_ws && \
+	catkin_make"
+
 #Set-up locale environment
-ENV LC_ALL C
+RUN export LC_ALL=C
