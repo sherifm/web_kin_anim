@@ -10,31 +10,35 @@ p = None
 app= Flask(__name__)
 app.debug = True
 
-environ['LC_ALL'] ='C'
-environ['ROS_ROOT'] = '/opt/ros/indigo/share/ros'
-environ['ROS_PACKAGE_PATH'] = '/home/vmagent/catkin_ws/src:\
-	/opt/ros/indigo/share:/opt/ros/indigo/stacks'
-environ['ROS_MASTER_URI'] = '//localhost:11311'
-environ['ROS_DISTRO'] = 'indigo'
-environ['ROS_ETC_DIR'] ='/opt/ros/indigo/etc/ros'
-environ['LD_LIBRARY_PATH'] = '/home/vmagent/catkin_ws/devel/lib:\
-	/home/vmagent/catkin_ws/devel/lib/x86_64-linux-gnu:\
-	/opt/ros/indigo/lib:/opt/ros/indigo/lib/x86_64-linux-gnu'
-environ['CPATH'] = '/home/vmagent/catkin_ws/devel/include:\
-	/opt/ros/indigo/include'
-environ['PATH'] = '/home/vmagent/catkin_ws/devel/bin:\
-	/opt/ros/indigo/bin:/usr/local/sbin:\
-	/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin' 
-environ['PYTHONPATH'] = '/home/vmagent/catkin_ws/devel/lib/python2.7/dist-packages:\
-	/opt/ros/indigo/lib/python2.7/dist-packages'
-environ['PKG_CONFIG_PATH'] = '/home/vmagent/catkin_ws/devel/lib/pkgconfig:\
-	/home/vmagent/catkin_ws/devel/lib/x86_64-linux-gnu/pkgconfig:\
-	/opt/ros/indigo/lib/pkgconfig:\
-	/opt/ros/indigo/lib/x86_64-linux-gnu/pkgconfig'
-environ['CMAKE_PREFIX_PATH'] ='/home/vmagent/catkin_ws/devel\
-	:/opt/ros/indigo'
 
-@app.route('/')
+#Set-up required ROS environment. 
+######Warning: This environment only works on Google's managed VMs
+######			Comment out for local use
+# environ['LC_ALL'] ='C'
+# environ['ROS_ROOT'] = '/opt/ros/indigo/share/ros'
+# environ['ROS_PACKAGE_PATH'] = '/home/vmagent/catkin_ws/src:\
+# 	/opt/ros/indigo/share:/opt/ros/indigo/stacks'
+# environ['ROS_MASTER_URI'] = '//localhost:11311'
+# environ['ROS_DISTRO'] = 'indigo'
+# environ['ROS_ETC_DIR'] ='/opt/ros/indigo/etc/ros'
+# environ['LD_LIBRARY_PATH'] = '/home/vmagent/catkin_ws/devel/lib:\
+# 	/home/vmagent/catkin_ws/devel/lib/x86_64-linux-gnu:\
+# 	/opt/ros/indigo/lib:/opt/ros/indigo/lib/x86_64-linux-gnu'
+# environ['CPATH'] = '/home/vmagent/catkin_ws/devel/include:\
+# 	/opt/ros/indigo/include'
+# environ['PATH'] = '/home/vmagent/catkin_ws/devel/bin:\
+# 	/opt/ros/indigo/bin:/usr/local/sbin:\
+# 	/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin' 
+# environ['PYTHONPATH'] = '/home/vmagent/catkin_ws/devel/lib/python2.7/dist-packages:\
+# 	/opt/ros/indigo/lib/python2.7/dist-packages'
+# environ['PKG_CONFIG_PATH'] = '/home/vmagent/catkin_ws/devel/lib/pkgconfig:\
+# 	/home/vmagent/catkin_ws/devel/lib/x86_64-linux-gnu/pkgconfig:\
+# 	/opt/ros/indigo/lib/pkgconfig:\
+# 	/opt/ros/indigo/lib/x86_64-linux-gnu/pkgconfig'
+# environ['CMAKE_PREFIX_PATH'] ='/home/vmagent/catkin_ws/devel\
+# 	:/opt/ros/indigo'
+
+@app.route("/home")
 def home():
   return render_template('home.html')
 
@@ -43,7 +47,8 @@ def start():
 	global p
 	try:
 		# p = subprocess.Popen(["source","/opt/ros/indigo/setup.bash"])
-		p = subprocess.Popen(["roscore"])
+		p = subprocess.Popen(["roslaunch","kinematics_animation",\
+			"pr2_web_demo.launch"])
 		logging.info('Child process started succesfully')
 		message = 'Process started'
 	except:
