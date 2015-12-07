@@ -1,6 +1,6 @@
-from flask import Flask, render_template
+from flask import Flask , render_template
 import subprocess
-from os import environ
+import os
 import logging
 import psutil
 
@@ -10,45 +10,16 @@ p = None
 app= Flask(__name__)
 app.debug = True
 
-
-#Set-up required ROS environment. 
-######Warning: This environment only works on Google's managed VMs
-######			Comment out for local use
-# environ['LC_ALL'] ='C'
-# environ['ROS_ROOT'] = '/opt/ros/indigo/share/ros'
-# environ['ROS_PACKAGE_PATH'] = '/home/vmagent/catkin_ws/src:\
-# 	/opt/ros/indigo/share:/opt/ros/indigo/stacks'
-# environ['ROS_MASTER_URI'] = '//localhost:11311'
-# environ['ROS_DISTRO'] = 'indigo'
-# environ['ROS_ETC_DIR'] ='/opt/ros/indigo/etc/ros'
-# environ['LD_LIBRARY_PATH'] = '/home/vmagent/catkin_ws/devel/lib:\
-# 	/home/vmagent/catkin_ws/devel/lib/x86_64-linux-gnu:\
-# 	/opt/ros/indigo/lib:/opt/ros/indigo/lib/x86_64-linux-gnu'
-# environ['CPATH'] = '/home/vmagent/catkin_ws/devel/include:\
-# 	/opt/ros/indigo/include'
-# environ['PATH'] = '/home/vmagent/catkin_ws/devel/bin:\
-# 	/opt/ros/indigo/bin:/usr/local/sbin:\
-# 	/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin' 
-# environ['PYTHONPATH'] = '/home/vmagent/catkin_ws/devel/lib/python2.7/dist-packages:\
-# 	/opt/ros/indigo/lib/python2.7/dist-packages'
-# environ['PKG_CONFIG_PATH'] = '/home/vmagent/catkin_ws/devel/lib/pkgconfig:\
-# 	/home/vmagent/catkin_ws/devel/lib/x86_64-linux-gnu/pkgconfig:\
-# 	/opt/ros/indigo/lib/pkgconfig:\
-# 	/opt/ros/indigo/lib/x86_64-linux-gnu/pkgconfig'
-# environ['CMAKE_PREFIX_PATH'] ='/home/vmagent/catkin_ws/devel\
-# 	:/opt/ros/indigo'
-
 @app.route("/home")
 def home():
   return render_template('home.html')
 
 @app.route("/start_process")
 def start():
+
 	global p
 	try:
-		# p = subprocess.Popen(["source","/opt/ros/indigo/setup.bash"])
-		p = subprocess.Popen(["roslaunch","kinematics_animation",\
-			"pr2_web_demo.launch"])
+		p = subprocess.Popen(["/bin/bash","-i","-c","roscore"])
 		logging.info('Child process started succesfully')
 		message = 'Process started'
 	except:
@@ -93,6 +64,15 @@ def find_process():
 		p_status = "conversion failed"
 	return 'This process has been called {0:d} <br> p_status \
 		= {1:s}'.format(CALL_COUNT, p_status)
+
+@app.route("/list_process")
+def list_process():
+	ps = subprocess.Popen('ps aux'.split(), stdout=subprocess.PIPE)
+	grep = subprocess.Popen('grep roscore'.split(), stdin=ps.stdout, stdout=subprocess.PIPE)
+	ps.wait()
+	ps.stdout.close()
+	output = grep.communicate()[0]
+	return output
 
 def kill(proc_pid):
     process = psutil.Process(proc_pid)
