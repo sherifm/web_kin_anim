@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Welcome to ROS!</h1>
+<br>
+<p>Click <a href="/start_process">start roscore</a> to start a roscore for {{ user }} on port {{ port }}.</p>
+<p>Click <a href="/find_process">find roscore</a> to check the status of your roscore.</p>
+<p>Click <a href="/stop_process">stop roscore</a> to stop the roscore.</p>
+<p>Click <a href="/list_process">show all roscores</a> to list all running roscores.</p>
+<p>Click <a href="/logout">here</a> to logout.</p>
+
+{% endblock %}
