@@ -124,6 +124,9 @@ ADD . /app/
 RUN sh -c 'echo "source /home/vmagent/catkin_ws/devel/setup.bash" >> ~/.bashrc'
 RUN sh -c 'echo "export LC_ALL=C" >> ~/.bashrc'
 
+#Expose Port 9090
+EXPOSE 9090
+
 
 # setup entrypoint
 #COPY ./entrypoint.sh /
