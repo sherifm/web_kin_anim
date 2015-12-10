@@ -12,9 +12,7 @@ app.debug = True
 # config
 app.secret_key = os.urandom(24)
 
-#Global vars
-CALL_COUNT=0 #Counter
-p = None #Subrocess
+###########Global vars and objects #############
 user_db = None
 
 #Define User class
@@ -23,7 +21,10 @@ class User(object):
     def __init__(self,name, pwd):
         self.username = name
         self.password = pwd
+        self.process = None
         self.port = None
+
+##########Non-routed helper functions###########
 
 #Generate a proxy to database of users
 def create_user_db(num_users):
@@ -59,7 +60,15 @@ def kill_process(proc_pid):
         proc.kill()
     process.kill()
 
-#################################################################################
+def get_external_ip():
+    ps = subprocess.Popen('wget http://ipinfo.io/ip -qO -',\
+        shell=True, stdout=subprocess.PIPE)
+    ps.wait()
+    external_ip = ps.communicate()[0]
+    ps.stdout.close()
+    return external_ip
+
+########## Routed functions ##################
 
 # use decorators to link the function to a url
 @app.route('/')
@@ -67,7 +76,7 @@ def kill_process(proc_pid):
 def index_page():
     return render_template('index.html',\
         user=session['username'],\
-        port=session['port'])  
+        port=session['port'],ip=get_external_ip())  
 
 # route for handling the login page logic
 @app.route('/login', methods=['GET', 'POST'])
@@ -91,6 +100,9 @@ def login():
 @login_required
 def logout():
     session.pop('logged_in', None)
+    session.pop('user_index', None)
+    session.pop('user_name', None)
+    session.pop('port', None)
     flash('You were logged out.')
     return redirect(url_for('login'))
 
@@ -98,19 +110,22 @@ def logout():
 #########################################################3
 
 @app.route("/home")
+@login_required
 def home():
-  return render_template('home.html')
+  ros_ws_url = 'ws://'+get_external_ip().rstrip()+':'+session['port']
+  return render_template('home.html',ws_url=ros_ws_url)
 
 @app.route("/start_process")
 @login_required
 def start():
-
-    global p
     try:
         #Use the -i interactive shell argument for web deployment
-        # p = subprocess.Popen(["/bin/bash","-i","-c","roscore -p %s" %session['port']])
-        p = subprocess.Popen(["/bin/bash","-c","roscore -p %s" %session['port']])
-        logging.info('Child process started succesfully')
+        # user_db[session['user_index']].process = subprocess.Popen(["/bin/bash","-i","-c",\
+        #     "roscore -p %s" %session['port']])
+        user_db[session['user_index']].process = subprocess.Popen(["/bin/bash","-i","-c",\
+            "roslaunch kinematics_animation pr2_web_animation.launch ws_port:=%s" %session['port']])
+        # user_db[session['user_index']].process = subprocess.Popen(["/bin/bash","-c","roscore -p %s" %session['port']])
+        logging.info('Child process started succesfully')   
         flash("Started roscore for user %s on port %s" %(session['username'],session['port']))
     except:
         logging.error('Could not start process')
@@ -118,8 +133,9 @@ def start():
     return render_template('index.html')
 
 @app.route("/stop_process")
+@login_required
 def stop():
-    global p
+    p = user_db[session['user_index']].process
     if p is not None:
         if p.poll() is None:
             try:
@@ -141,9 +157,9 @@ def stop():
     return render_template('index.html')   
 
 @app.route("/find_process")
+@login_required
 def find_process():
-    global CALL_COUNT, p
-    CALL_COUNT +=1
+    p = user_db[session['user_index']].process
     if p is not None:
         p_status = p.poll()
     else:
@@ -152,21 +168,21 @@ def find_process():
         p_status = str(p_status)
     except:
         p_status = "conversion failed"
-    flash('This process has been called {0:d} times. \
-        Current status: {1:s}'.format(CALL_COUNT, p_status))
+    flash('Current process status: {0:s}'.format(p_status))
     return render_template('index.html')  
 
 @app.route("/list_process")
+@login_required
 def list_process():
     ps = subprocess.Popen('ps aux'.split(), stdout=subprocess.PIPE)
-    grep = subprocess.Popen('grep roscore'.split(), stdin=ps.stdout, stdout=subprocess.PIPE)
+    grep = subprocess.Popen('grep roslaunch'.split(), stdin=ps.stdout, stdout=subprocess.PIPE)
     ps.wait()
     ps.stdout.close()
     output = grep.communicate()[0]
     flash('%s' %output)
     return render_template('index.html')  
 
-###################################################################################################
+############## Create DB and start app ################
 
 #Create a user database
 user_db = create_user_db(3)

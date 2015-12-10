@@ -24,6 +24,9 @@ manual_scaling:
 network:
   forwarded_ports:
   - 9090
+  - 1234
+  - 1235
+  - 1236
 
 handlers:
 - url: .*
