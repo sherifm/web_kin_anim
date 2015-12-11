@@ -124,6 +124,13 @@ ADD requirements.txt /app/
 RUN pip install -r /app/requirements.txt
 ADD . /app/
 
-#Probably doesn't do anything
-#Expose Port 9090
-#EXPOSE 9090
+#Setup bashrc
+RUN sh -c 'echo "source /home/vmagent/catkin_ws/devel/setup.bash" >> ~/.bashrc'
+RUN sh -c 'echo "export LC_ALL=C" >> ~/.bashrc'
+
+
+# setup entrypoint
+#COPY ./entrypoint.sh /
+
+#ENTRYPOINT ["/entrypoint.sh"]
+#CMD ["bash"]

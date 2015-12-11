@@ -117,7 +117,11 @@
 # RUN sh -c 'echo "source /home/vmagent/catkin_ws/devel/setup.bash" >> ~/.bashrc'
 # RUN sh -c 'echo "export LC_ALL=C" >> ~/.bashrc'
 
+<<<<<<< HEAD
+FROM sherifm/ros_web_kin:latest
+=======
 FROM sherifm/ros_webtool:latest
+>>>>>>> front_end_experimental
 
 #Update app requirements
 ADD requirements.txt /app/
