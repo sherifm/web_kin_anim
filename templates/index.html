@@ -1,39 +1,43 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1>Welcome to ROS Trajectory Animator!</h1>
-<br>
-<!-- <p>Click <a href="/start_process">start process</a> to start an aniation process for {{ user }} on port {{ port }}.  -->
-<br> You are logged in as {{user}} 
-<br> Your server ip is {{ ip }} being served from a websocket on port {{ port }}.
-</p>
+<div>
+	<h2>Welcome to ROS Trajectory Animator!</h2>
+	<!-- <p>Click <a href="/start_process">start process</a> to start an aniation process for {{ user }} on port {{ port }}.  -->
+	You are logged in as {{user}} 
+	<br> Your server ip is {{ ip }} being served from a websocket on port {{ port }}.
+</div>
+
 <!-- <p>Click <a href="/find_process">find process</a> to check the status of your process.</p> -->
 <!-- <p>Click <a href="/stop_process">stop process</a> to stop the process.</p> -->
 <!-- <p>Click <a href="/list_process">show all </a> to list all running ROS launches.</p> -->
 <!-- <p>Click <a href="/home">animation</a> to see a live animation.</p> -->
-<!-- <p>Click <a href="/logout">here</a> to logout.< --></p>
+<!-- <p>Click <a href="/logout">here</a> to logout.</p> -->
 
+<div class="button-container">
+	<br>
+	<form action="/start_process" method="post">
+	<input class="btn btn-default" type="submit" value="Start ROS">
+	</form>
+
+	<form action="/stop_process" method="post">
+	<input class="btn btn-default" type="submit" value="Stop ROS">
+	</form>
+
+	<form action="/find_process" method="post">
+	<input class="btn btn-default" type="submit" value="ROS Status">
+	</form>
+
+	<form action="/home" method="post">
+	<input class="btn btn-default" type="submit" value="Refresh Simulation">
+	</form>
+
+	<form action="/logout" method="post">
+	<input class="btn btn-default" type="submit" value="Logout">
+	</form>
+</div>
 
 <br>
-<form action="/start_process" method="post">
-<input class="btn btn-default" type="submit" value="Start ROS">
-</form>
-
-<form action="/stop_process" method="post">
-<input class="btn btn-default" type="submit" value="Stop ROS">
-</form>
-
-<form action="/find_process" method="post">
-<input class="btn btn-default" type="submit" value="ROS Status">
-</form>
-
-<form action="/home" method="post">
-<input class="btn btn-default" type="submit" value="Refresh Simulation">
-</form>
-
-<form action="/logout" method="post">
-<input class="btn btn-default" type="submit" value="Logout">
-</form>
 
 <div id="urdf"></div>
 
