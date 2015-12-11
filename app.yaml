@@ -21,6 +21,13 @@ manual_scaling:
 #   cpu_utilization:
 #     target_utilization: 0.75
 
+network:
+  forwarded_ports:
+  - 9090
+  - 1234
+  - 1235
+  - 1236
+
 handlers:
 - url: .*
   script: main.app
