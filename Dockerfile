@@ -100,10 +100,10 @@
 
 # #Clone kinematics_animation, universal_robot 
 # #	,barrett_model and youbot description packages
-# RUN git clone -b web https://github.com/sherifm/kinematics_animation.git \
-# 	/home/vmagent/catkin_ws/src/kinematics_animation
 # RUN git clone https://github.com/sherifm/universal_robot.git \
 # 	/home/vmagent/catkin_ws/src/universal_robot
+# RUN git clone -b web https://github.com/sherifm/kinematics_animation.git \
+# 	/home/vmagent/catkin_ws/src/kinematics_animation
 # RUN git clone https://github.com/sherifm/barrett_model.git \
 # 	/home/vmagent/catkin_ws/src/barrett_model
 # RUN git clone https://github.com/mas-group/youbot_description.git \
@@ -113,7 +113,15 @@
 # 	cd /home/vmagent/catkin_ws && \
 # 	catkin_make"
 
+<<<<<<< Updated upstream
 FROM sherifm/ros_web_kin:latest
+=======
+# #Setup bashrc
+# RUN sh -c 'echo "source /home/vmagent/catkin_ws/devel/setup.bash" >> ~/.bashrc'
+# RUN sh -c 'echo "export LC_ALL=C" >> ~/.bashrc'
+
+FROM sherifm/ros_webtool:latest
+>>>>>>> Stashed changes
 
 #Update app requirements
 ADD requirements.txt /app/
