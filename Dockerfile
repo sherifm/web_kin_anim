@@ -113,15 +113,11 @@
 # 	cd /home/vmagent/catkin_ws && \
 # 	catkin_make"
 
-<<<<<<< Updated upstream
-FROM sherifm/ros_web_kin:latest
-=======
 # #Setup bashrc
 # RUN sh -c 'echo "source /home/vmagent/catkin_ws/devel/setup.bash" >> ~/.bashrc'
 # RUN sh -c 'echo "export LC_ALL=C" >> ~/.bashrc'
 
 FROM sherifm/ros_webtool:latest
->>>>>>> Stashed changes
 
 #Update app requirements
 ADD requirements.txt /app/
