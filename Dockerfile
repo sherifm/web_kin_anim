@@ -124,6 +124,14 @@ ADD requirements.txt /app/
 RUN pip install -r /app/requirements.txt
 ADD . /app/
 
+# setup entrypoint
+#COPY ./entrypoint.sh /
+
+#ENTRYPOINT ["/entrypoint.sh"]
+#CMD ["bash"]
+
+=======
 #Probably doesn't do anything
 #Expose Port 9090
 #EXPOSE 9090
+>>>>>>> flask_roscore
