@@ -113,7 +113,7 @@
 # 	cd /home/vmagent/catkin_ws && \
 # 	catkin_make"
 
-FROM sherifm/ros_web_kin:latest
+FROM sherifm/ros_webtool:latest
 
 #Update app requirements
 ADD requirements.txt /app/
@@ -130,3 +130,4 @@ RUN sh -c 'echo "export LC_ALL=C" >> ~/.bashrc'
 
 #ENTRYPOINT ["/entrypoint.sh"]
 #CMD ["bash"]
+
