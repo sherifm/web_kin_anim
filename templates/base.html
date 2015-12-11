@@ -60,24 +60,25 @@
   </head>
 
 
-  <body onload="init()"> <!-- onload is used for Robot Web Tools -->
+  <body onload="init()"> <!-- init() is used to initialize Robot Web Tools -->
 
     <div class="container">
 
       <!-- child template -->
       {% block content %}{% endblock %}
 
-      <h3>Errors:</h3>
+      <h3>Interactive Messages:</h3>
+      <!-- messages -->
+      {% for message in get_flashed_messages() %}
+        {{ message }}
+      {% endfor %}
+
+      <h3>Error Notifications:</h3>
       <!-- errors -->
       {% if error %}
         <p class="error"><strong>Error:</strong> {{ error }}</p>
       {% endif %}
 
-      <h3>Flash Messages:</h3>
-      <!-- messages -->
-      {% for message in get_flashed_messages() %}
-        {{ message }}
-      {% endfor %}
     </div>
 
   </body>

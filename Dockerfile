@@ -130,8 +130,6 @@ ADD . /app/
 #ENTRYPOINT ["/entrypoint.sh"]
 #CMD ["bash"]
 
-=======
 #Probably doesn't do anything
 #Expose Port 9090
 #EXPOSE 9090
->>>>>>> flask_roscore
